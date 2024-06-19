@@ -30,14 +30,25 @@ function renderArticles(articles) {
         const article = document.createElement('div');
         article.className = 'article';
 
+        // getting image, if there is one:
         const imageUrl = item.enclosure ? item.enclosure.link : '';
+
+        // getting categories, if there are some:
+        const categories = item.categories && item.categories.length > 0 ? item.categories : ['Uncategorized'];
+
+        const categoriesHtml = categories.map(category => `<span class="category">${category}</span>`).join(', ');
 
         article.innerHTML = `
             ${imageUrl ? `<img src="${imageUrl}" alt="${item.title}" class="article-image" width="300">` : ''}
             <h2><a href="${item.link}" target="_blank">${item.title}</a></h2>
             <p>${item.description}</p>
+            <p>Categories: ${categoriesHtml}</p>
             <small>${new Date(item.pubDate).toLocaleString()}</small>
         `;
         content.appendChild(article);
     });
 }
+
+
+
+
