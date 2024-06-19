@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadFeeds();
     }
     setupAddFeedForm();
+    setupCategoryFilter();
 });
 
 function loadFeeds() {
@@ -74,7 +75,11 @@ function removeFeed(feedUrl, feedItemId) {
         feedItem.remove();
     }
 
-    loadFeeds();
+    // Re-render articles
+    const allArticles = JSON.parse(localStorage.getItem('allArticles')) || [];
+    const updatedArticles = allArticles.filter(article => article.feedUrl !== feedUrl);
+    localStorage.setItem('allArticles', JSON.stringify(updatedArticles));
+    filterAndRenderArticles();
 }
 
 function editFeed(feedUrl, feedName) {
@@ -137,6 +142,7 @@ async function fetchFeed(feedUrl, feedName) {
 
         const sortedArticles = sortArticlesByDate(data.items);
         appendArticles(sortedArticles, feedName, feedUrl);
+        updateCategories();
     } catch (error) {
         console.error('Error fetching the RSS feed:', error);
     }
@@ -159,7 +165,6 @@ function handleImage(item) {
 }
 
 function appendArticles(articles, feedName, feedUrl) {
-    const content = document.getElementById('content');
     let allArticles = JSON.parse(localStorage.getItem('allArticles')) || [];
 
     articles.forEach(item => {
@@ -169,10 +174,41 @@ function appendArticles(articles, feedName, feedUrl) {
     });
 
     localStorage.setItem('allArticles', JSON.stringify(allArticles));
+    filterAndRenderArticles();
+}
+
+function setupCategoryFilter() {
+    const categorySelect = document.getElementById('categorySelect');
+    categorySelect.addEventListener('change', filterAndRenderArticles);
+}
+
+function updateCategories() {
+    const allArticles = JSON.parse(localStorage.getItem('allArticles')) || [];
+    const categories = new Set();
+    allArticles.forEach(article => {
+        article.categories.forEach(category => categories.add(category));
+    });
+
+    const categorySelect = document.getElementById('categorySelect');
+    categorySelect.innerHTML = '<option value="all">All</option>';
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categorySelect.appendChild(option);
+    });
+}
+
+function filterAndRenderArticles() {
+    const content = document.getElementById('content');
+    const allArticles = JSON.parse(localStorage.getItem('allArticles')) || [];
+
+    const selectedCategory = document.getElementById('categorySelect').value;
+    const filteredArticles = selectedCategory === 'all' ? allArticles : allArticles.filter(article => article.categories.includes(selectedCategory));
 
     content.innerHTML = '';
 
-    const sortedAllArticles = sortArticlesByDate(allArticles);
+    const sortedAllArticles = sortArticlesByDate(filteredArticles);
 
     sortedAllArticles.forEach(item => {
         const article = document.createElement('div');
