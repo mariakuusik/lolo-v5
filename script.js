@@ -37,11 +37,22 @@ async function fetchFeed(feedUrl) {
         if (data.status !== 'ok') {
             throw new Error('Failed to fetch RSS feed');
         }
-
         appendArticles(data.items);
     } catch (error) {
         console.error('Error fetching the RSS feed:', error);
     }
+}
+
+function handleImage(item) {
+    let imageUrl = '';
+    if (item.enclosure) {
+        imageUrl = item.enclosure.link;
+    } else if (item['media:content'] && item['media:content'].url) {
+        imageUrl = item['media:content'].url;
+    } else if (item['media:thumbnail'] && item['media:thumbnail'].url) {
+        imageUrl = item['media:thumbnail'].url;
+    }
+    return imageUrl;
 }
 
 function appendArticles(articles) {
@@ -53,12 +64,9 @@ function appendArticles(articles) {
         const article = document.createElement('div');
         article.className = 'article';
 
-        // getting image, if there is one:
-        const imageUrl = item.enclosure ? item.enclosure.link : '';
+        const imageUrl = handleImage(item);
 
-        // getting categories, if there are some:
         const categories = item.categories && item.categories.length > 0 ? item.categories : ['Uncategorized'];
-
         const categoriesHtml = categories.map(category => `<span class="category">${category}</span>`).join(', ');
 
         article.innerHTML = `
