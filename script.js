@@ -1,7 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
     const defaultFeedUrl = 'https://flipboard.com/@raimoseero/feed-nii8kd0sz.rss';
+    loadFeeds();
     fetchFeed(defaultFeedUrl);
+
+    document.getElementById('newRSSForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const rssUrl = document.getElementById('rssUrl').value;
+        if (rssUrl) {
+            addFeed(rssUrl);
+            document.getElementById('rssUrl').value = ''; // Clear the input field
+        }
+    });
 });
+
+function loadFeeds() {
+    const feeds = JSON.parse(localStorage.getItem('feeds')) || [];
+    feeds.forEach(feedUrl => fetchFeed(feedUrl));
+}
+
+function addFeed(feedUrl) {
+    const feeds = JSON.parse(localStorage.getItem('feeds')) || [];
+    if (!feeds.includes(feedUrl)) {
+        feeds.push(feedUrl);
+        localStorage.setItem('feeds', JSON.stringify(feeds));
+        fetchFeed(feedUrl);
+    }
+}
 
 async function fetchFeed(feedUrl) {
     console.log('Fetching feed:', feedUrl);
@@ -14,15 +38,14 @@ async function fetchFeed(feedUrl) {
             throw new Error('Failed to fetch RSS feed');
         }
 
-        renderArticles(data.items);
+        appendArticles(data.items);
     } catch (error) {
         console.error('Error fetching the RSS feed:', error);
     }
 }
 
-function renderArticles(articles) {
+function appendArticles(articles) {
     const content = document.getElementById('content');
-    content.innerHTML = '';
 
     articles.forEach(item => {
         console.log(JSON.stringify(item, null, 2));
