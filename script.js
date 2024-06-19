@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function loadFeeds() {
     const feeds = JSON.parse(localStorage.getItem('feeds')) || [];
+    localStorage.setItem('allArticles', JSON.stringify([])); // Clear allArticles before loading feeds
     feeds.forEach(feed => {
         fetchFeed(feed.url, feed.name);
         displayFeed(feed.url, feed.name);
@@ -73,15 +74,14 @@ function removeFeed(feedUrl, feedItemId) {
         feedItem.remove();
     }
 
-    const articles = document.querySelectorAll(`.article[data-feed-url="${feedUrl}"]`);
-    articles.forEach(article => article.remove());
+    loadFeeds();
 }
 
 function editFeed(feedUrl, feedName) {
     console.log('Editing feed:', feedUrl, feedName);
     const existingForm = document.getElementById('editFeedForm');
     if (existingForm) {
-        existingForm.remove(); // Removes any existing form before creating a new one
+        existingForm.remove(); // Remove any existing form before creating a new one
     }
 
     const editForm = document.createElement('div');
@@ -134,10 +134,16 @@ async function fetchFeed(feedUrl, feedName) {
         if (data.status !== 'ok') {
             throw new Error('Failed to fetch RSS feed');
         }
-        appendArticles(data.items, feedName, feedUrl);
+
+        const sortedArticles = sortArticlesByDate(data.items);
+        appendArticles(sortedArticles, feedName, feedUrl);
     } catch (error) {
         console.error('Error fetching the RSS feed:', error);
     }
+}
+
+function sortArticlesByDate(articles) {
+    return articles.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 }
 
 function handleImage(item) {
@@ -154,13 +160,24 @@ function handleImage(item) {
 
 function appendArticles(articles, feedName, feedUrl) {
     const content = document.getElementById('content');
+    let allArticles = JSON.parse(localStorage.getItem('allArticles')) || [];
 
     articles.forEach(item => {
-        console.log(JSON.stringify(item, null, 2));
+        item.feedName = feedName;
+        item.feedUrl = feedUrl;
+        allArticles.push(item);
+    });
 
+    localStorage.setItem('allArticles', JSON.stringify(allArticles));
+
+    content.innerHTML = '';
+
+    const sortedAllArticles = sortArticlesByDate(allArticles);
+
+    sortedAllArticles.forEach(item => {
         const article = document.createElement('div');
         article.className = 'article';
-        article.dataset.feedUrl = feedUrl;
+        article.dataset.feedUrl = item.feedUrl;
 
         const imageUrl = handleImage(item);
 
@@ -168,7 +185,7 @@ function appendArticles(articles, feedName, feedUrl) {
         const categoriesHtml = categories.map(category => `<span class="category">${category}</span>`).join(', ');
 
         article.innerHTML = `
-            <div class="feed-name">${feedName}</div>
+            <div class="feed-name">${item.feedName}</div> <!-- Display feed name -->
             ${imageUrl ? `<img src="${imageUrl}" alt="${item.title}" class="article-image" width="300">` : ''}
             <h2><a href="${item.link}" target="_blank">${item.title}</a></h2>
             <p>${item.description}</p>
