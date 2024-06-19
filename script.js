@@ -43,9 +43,11 @@ function addFeed(feedUrl, feedName) {
 function displayFeed(feedUrl, feedName) {
     const feedList = document.getElementById('feeds');
     const feedItem = document.createElement('li');
-    feedItem.id = `feed-${btoa(feedUrl)}`; // Creates a unique ID for the feed list item
+    feedItem.id = `feed-${btoa(feedUrl)}`; // Create a unique ID for the feed list item
     feedItem.innerHTML = `
-        ${feedName} <button onclick="removeFeed('${feedUrl}', 'feed-${btoa(feedUrl)}')">Remove</button>
+        ${feedName} 
+        <button onclick="editFeed('${feedUrl}', '${feedName}')">Edit</button>
+        <button onclick="removeFeed('${feedUrl}', 'feed-${btoa(feedUrl)}')">Remove</button>
     `;
     feedList.appendChild(feedItem);
 }
@@ -73,6 +75,53 @@ function removeFeed(feedUrl, feedItemId) {
 
     const articles = document.querySelectorAll(`.article[data-feed-url="${feedUrl}"]`);
     articles.forEach(article => article.remove());
+}
+
+function editFeed(feedUrl, feedName) {
+    console.log('Editing feed:', feedUrl, feedName);
+    const existingForm = document.getElementById('editFeedForm');
+    if (existingForm) {
+        existingForm.remove(); // Removes any existing form before creating a new one
+    }
+
+    const editForm = document.createElement('div');
+    editForm.innerHTML = `
+        <form id="editFeedForm">
+            <label for="editFeedName">Feed Name:</label>
+            <input type="text" id="editFeedName" value="${feedName}" required>
+            <label for="editFeedUrl">Feed URL:</label>
+            <input type="url" id="editFeedUrl" value="${feedUrl}" required>
+            <button type="submit">Save Changes</button>
+            <button type="button" onclick="cancelEdit()">Cancel</button>
+        </form>
+    `;
+    document.body.appendChild(editForm);
+    console.log('Edit form appended to body');
+
+    document.getElementById('editFeedForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const newFeedName = document.getElementById('editFeedName').value;
+        const newFeedUrl = document.getElementById('editFeedUrl').value;
+        updateFeed(feedUrl, newFeedUrl, newFeedName);
+        document.body.removeChild(editForm);
+    });
+}
+
+function cancelEdit() {
+    const editForm = document.getElementById('editFeedForm').parentElement;
+    document.body.removeChild(editForm);
+}
+
+function updateFeed(oldUrl, newUrl, newName) {
+    let feeds = JSON.parse(localStorage.getItem('feeds')) || [];
+    feeds = feeds.map(feed => {
+        if (feed.url === oldUrl) {
+            return { url: newUrl, name: newName };
+        }
+        return feed;
+    });
+    localStorage.setItem('feeds', JSON.stringify(feeds));
+    location.reload();
 }
 
 async function fetchFeed(feedUrl, feedName) {
