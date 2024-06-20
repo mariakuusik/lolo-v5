@@ -296,14 +296,42 @@ async function filterAndRenderArticles() {
         const categories = item.categories && item.categories.length > 0 ? item.categories : ['Uncategorized'];
         const categoriesHtml = categories.map(category => `<span class="category">${category}</span>`).join(', ');
 
-        article.innerHTML = `
-            <div class="feed-name">${item.feedName}</div> <!-- Display feed name -->
-            ${imageUrl ? `<img src="${imageUrl}" alt="${item.title}" class="article-image" data-url="${item.link}" width="300">` : ''}
-            <h2><a href="#" class="article-title" data-url="${item.link}">${item.title}</a></h2>
-            <p class="article-description" data-url="${item.link}">${item.description}</p>
-            <p>Categories: ${categoriesHtml}</p>
-            <small>${new Date(item.pubDate).toLocaleString()}</small>
-        `;
+        const articleContent = document.createElement('div');
+        articleContent.className = 'article-content';
+
+        if (imageUrl) {
+            const image = document.createElement('img');
+            image.src = imageUrl;
+            image.alt = item.title;
+            image.className = 'article-image';
+            image.dataset.url = item.link;
+            articleContent.appendChild(image);
+        }
+
+        const textContent = document.createElement('div');
+        textContent.className = 'text-content';
+
+        const title = document.createElement('h2');
+        title.innerHTML = `<a href="#" class="article-title" data-url="${item.link}">${item.title}</a>`;
+
+        const description = document.createElement('p');
+        description.className = 'article-description';
+        description.dataset.url = item.link;
+        description.textContent = item.description;
+
+        const categoryPara = document.createElement('p');
+        categoryPara.innerHTML = `Categories: ${categoriesHtml}`;
+
+        const date = document.createElement('small');
+        date.textContent = new Date(item.pubDate).toLocaleString();
+
+        textContent.appendChild(title);
+        textContent.appendChild(description);
+        textContent.appendChild(categoryPara);
+        textContent.appendChild(date);
+
+        articleContent.appendChild(textContent);
+        article.appendChild(articleContent);
 
         // event listeners for title, description, and image
         const clickableElements = article.querySelectorAll('.article-title, .article-description, .article-image');

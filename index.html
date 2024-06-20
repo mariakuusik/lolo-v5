@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,39 +9,34 @@
 </head>
 
 <body>
-    <header>
-        <h1>Lolo v5</h1>
-        <form id="newRSSForm">
-            <input type="url" id="rssUrl" placeholder="Enter RSS Feed URL">
-            <button type="submit">Add Feed</button>
-        </form>
-        <div id="feedList">
+    <div class="container">
+        <nav id="sidebar" class="sidebar">
             <h2>Your Feeds</h2>
             <ul id="feeds"></ul>
-        </div>
-        <div id="categoryFilter">
             <h3>Filter by category</h3>
             <select id="categorySelect">
                 <option value="all">All categories</option>
             </select>
-
-            <!-- Categories -->
+        </nav>
+        <div class="main-content">
+            <header>
+                <h1>Lolo v5</h1>
+                <form id="newRSSForm">
+                    <input type="url" id="rssUrl" placeholder="Enter RSS Feed URL">
+                    <button type="submit">Add Feed</button>
+                </form>
+            </header>
+            <main id="content">
+                <!-- RSS content -->
+            </main>
         </div>
-    </header>
-    <main id="content">
-        <!-- RSS content -->
-    </main>
-    <footer>
-    </footer>
-
-    <!-- Modal -->
+    </div>
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <div id="modal-body"></div>
         </div>
     </div>
-
     <script src="script.js"></script>
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </body>
