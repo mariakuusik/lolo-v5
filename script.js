@@ -9,7 +9,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setupAddFeedForm();
     setupCategoryFilter();
+
+    // test button for modal
+    document.getElementById('openModalButton').addEventListener('click', () => {
+        openModal('<h1>Test Content</h1><p>This is a test.</p>');
+    });
 });
+
+function openModal(content) {
+    const modal = document.getElementById('myModal');
+    const modalBody = document.getElementById('modal-body');
+    const span = document.getElementsByClassName('close')[0];
+
+    modalBody.innerHTML = content;
+    modal.style.display = 'block';
+
+    span.onclick = function () {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+}
 
 function loadFeeds() {
     const feeds = JSON.parse(localStorage.getItem('feeds')) || [];
@@ -42,7 +66,7 @@ async function addFeed(feedUrl, feedName) {
             displayFeed(feedUrl, feedName);
         } catch {
             console.error('Failed to add feed', error);
-            alert('Failed to add feed. Please chck the URL and try again')
+            alert('Failed to add feed. Please check the URL and try again')
         }
     }
 }
