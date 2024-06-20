@@ -16,12 +16,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+async function fetchClutterFreeContent(articleUrl) {
+    const proxyUrl = 'http://localhost:3000/webparser';
+
+    try {
+        const response = await fetch(proxyUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url: articleUrl })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch clutter-free content');
+        }
+
+        const data = await response.json();
+        console.log('Clutter-free content data:', data);
+        return data;
+    } catch (error) {
+        console.error('Error fetching clutter-free content:', error);
+        alert('Failed to fetch clutter-free content. Please try again.');
+    }
+}
+
 function openModal(content) {
     const modal = document.getElementById('myModal');
     const modalBody = document.getElementById('modal-body');
     const span = document.getElementsByClassName('close')[0];
 
-    modalBody.innerHTML = content;
+    modalBody.innerHTML = content.content || 'No content available'; // Use content.content if it exists
+
     modal.style.display = 'block';
 
     span.onclick = function () {
@@ -170,7 +196,7 @@ async function fetchFeed(feedUrl, feedName) {
         }
 
         const sortedArticles = sortArticlesByDate(data.items);
-        appendArticles(sortedArticles, feedName, feedUrl);
+        await appendArticles(sortedArticles, feedName, feedUrl);
         updateCategories();
     } catch (error) {
         console.error('Error fetching the RSS feed:', error);
@@ -194,7 +220,7 @@ function handleImage(item) {
     return imageUrl;
 }
 
-function appendArticles(articles, feedName, feedUrl) {
+async function appendArticles(articles, feedName, feedUrl) {
     let allArticles = JSON.parse(localStorage.getItem('allArticles')) || [];
 
     articles.forEach(item => {
@@ -204,7 +230,7 @@ function appendArticles(articles, feedName, feedUrl) {
     });
 
     localStorage.setItem('allArticles', JSON.stringify(allArticles));
-    filterAndRenderArticles();
+    await filterAndRenderArticles();
 }
 
 function setupCategoryFilter() {
@@ -229,7 +255,7 @@ function updateCategories() {
     });
 }
 
-function filterAndRenderArticles() {
+async function filterAndRenderArticles() {
     const content = document.getElementById('content');
     const allArticles = JSON.parse(localStorage.getItem('allArticles')) || [];
 
@@ -240,7 +266,7 @@ function filterAndRenderArticles() {
 
     const sortedAllArticles = sortArticlesByDate(filteredArticles);
 
-    sortedAllArticles.forEach(item => {
+    for (const item of sortedAllArticles) {
         const article = document.createElement('div');
         article.className = 'article';
         article.dataset.feedUrl = item.feedUrl;
@@ -253,19 +279,20 @@ function filterAndRenderArticles() {
         article.innerHTML = `
             <div class="feed-name">${item.feedName}</div> <!-- Display feed name -->
             ${imageUrl ? `<img src="${imageUrl}" alt="${item.title}" class="article-image" width="300">` : ''}
-            <h2><a href="#" class="article-title" data-content="${item.description}">${item.title}</a></h2>
+            <h2><a href="#" class="article-title" data-url="${item.link}">${item.title}</a></h2>
             <p>${item.description}</p>
             <p>Categories: ${categoriesHtml}</p>
             <small>${new Date(item.pubDate).toLocaleString()}</small>
         `;
 
         // event listener to the article title
-        article.querySelector('.article-title').addEventListener('click', (event) => {
+        article.querySelector('.article-title').addEventListener('click', async (event) => {
             event.preventDefault();
-            const content = event.target.dataset.content;
-            openModal(content);
+            const articleUrl = event.target.dataset.url;
+            const clutterFreeContent = await fetchClutterFreeContent(articleUrl);
+            openModal(clutterFreeContent);
         });
 
         content.appendChild(article);
-    });
+    }
 }
