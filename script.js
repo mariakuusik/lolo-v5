@@ -32,13 +32,18 @@ function setupAddFeedForm() {
     });
 }
 
-function addFeed(feedUrl, feedName) {
+async function addFeed(feedUrl, feedName) {
     const feeds = JSON.parse(localStorage.getItem('feeds')) || [];
     if (!feeds.some(feed => feed.url === feedUrl)) {
-        feeds.push({ url: feedUrl, name: feedName });
-        localStorage.setItem('feeds', JSON.stringify(feeds));
-        fetchFeed(feedUrl, feedName);
-        displayFeed(feedUrl, feedName);
+        try {
+            await fetchFeed(feedUrl, feedName);
+            feeds.push({ url: feedUrl, name: feedName });
+            localStorage.setItem('feeds', JSON.stringify(feeds));
+            displayFeed(feedUrl, feedName);
+        } catch {
+            console.error('Failed to add feed', error);
+            alert('Failed to add feed. Please chck the URL and try again')
+        }
     }
 }
 
@@ -145,6 +150,7 @@ async function fetchFeed(feedUrl, feedName) {
         updateCategories();
     } catch (error) {
         console.error('Error fetching the RSS feed:', error);
+        throw error;
     }
 }
 
