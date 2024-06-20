@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAddFeedForm();
     setupCategoryFilter();
 
-    // test button for modal
+    // Add event listener to the test button to open the modal
     document.getElementById('openModalButton').addEventListener('click', () => {
         openModal('<h1>Test Content</h1><p>This is a test.</p>');
     });
@@ -253,11 +253,19 @@ function filterAndRenderArticles() {
         article.innerHTML = `
             <div class="feed-name">${item.feedName}</div> <!-- Display feed name -->
             ${imageUrl ? `<img src="${imageUrl}" alt="${item.title}" class="article-image" width="300">` : ''}
-            <h2><a href="${item.link}" target="_blank">${item.title}</a></h2>
+            <h2><a href="#" class="article-title" data-content="${item.description}">${item.title}</a></h2>
             <p>${item.description}</p>
             <p>Categories: ${categoriesHtml}</p>
             <small>${new Date(item.pubDate).toLocaleString()}</small>
         `;
+
+        // event listener to the article title
+        article.querySelector('.article-title').addEventListener('click', (event) => {
+            event.preventDefault();
+            const content = event.target.dataset.content;
+            openModal(content);
+        });
+
         content.appendChild(article);
     });
 }
