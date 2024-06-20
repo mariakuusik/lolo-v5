@@ -285,19 +285,22 @@ async function filterAndRenderArticles() {
 
         article.innerHTML = `
             <div class="feed-name">${item.feedName}</div> <!-- Display feed name -->
-            ${imageUrl ? `<img src="${imageUrl}" alt="${item.title}" class="article-image" width="300">` : ''}
+            ${imageUrl ? `<img src="${imageUrl}" alt="${item.title}" class="article-image" data-url="${item.link}" width="300">` : ''}
             <h2><a href="#" class="article-title" data-url="${item.link}">${item.title}</a></h2>
-            <p>${item.description}</p>
+            <p class="article-description" data-url="${item.link}">${item.description}</p>
             <p>Categories: ${categoriesHtml}</p>
             <small>${new Date(item.pubDate).toLocaleString()}</small>
         `;
 
-        // event listener to the article title
-        article.querySelector('.article-title').addEventListener('click', async (event) => {
-            event.preventDefault();
-            const articleUrl = event.target.dataset.url;
-            const clutterFreeContent = await fetchClutterFreeContent(articleUrl);
-            openModal(clutterFreeContent);
+        // event listeners for title, description, and image
+        const clickableElements = article.querySelectorAll('.article-title, .article-description, .article-image');
+        clickableElements.forEach(element => {
+            element.addEventListener('click', async (event) => {
+                event.preventDefault();
+                const articleUrl = event.target.dataset.url;
+                const clutterFreeContent = await fetchClutterFreeContent(articleUrl);
+                openModal(clutterFreeContent);
+            });
         });
 
         content.appendChild(article);
