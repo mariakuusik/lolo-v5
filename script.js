@@ -66,7 +66,20 @@ function openModal(content) {
             modal.style.display = 'none';
         }
     }
+
+    renderTweets();
 }
+
+function renderTweets() {
+    const tweets = document.querySelectorAll('.twitter-tweet');
+    tweets.forEach(tweet => {
+        const script = document.createElement('script');
+        script.setAttribute('src', 'https://platform.twitter.com/widgets.js');
+        script.setAttribute('charset', 'utf-8');
+        tweet.appendChild(script);
+    });
+}
+
 
 function loadFeeds() {
     const feeds = JSON.parse(localStorage.getItem('feeds')) || [];
