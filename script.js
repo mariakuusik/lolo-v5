@@ -9,11 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setupAddFeedForm();
     setupCategoryFilter();
-
-    // Add event listener to the test button to open the modal
-    document.getElementById('openModalButton').addEventListener('click', () => {
-        openModal('<h1>Test Content</h1><p>This is a test.</p>');
-    });
 });
 
 async function fetchClutterFreeContent(articleUrl) {
