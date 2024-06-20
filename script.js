@@ -46,7 +46,19 @@ function openModal(content) {
     const modalBody = document.getElementById('modal-body');
     const span = document.getElementsByClassName('close')[0];
 
-    modalBody.innerHTML = content.content || 'No content available'; // Use content.content if it exists
+    const articleTitle = content.title || 'No title available';
+    const articleAuthor = content.author ? `By ${content.author}` : 'Author not available';
+    const articleDate = content.date_published ? new Date(content.date_published).toLocaleDateString() : 'Date not available';
+    const articleContent = content.content || 'No content available';
+    const articleImage = content.lead_image_url ? `<img src="${content.lead_image_url}" alt="${articleTitle}" style="max-width: 100%;">` : '';
+
+    modalBody.innerHTML = `
+    <h1>${articleTitle}</h1>
+    <p>${articleAuthor}</p>
+    <p>${articleDate}</p>
+    ${articleImage}
+    <div>${articleContent}</div>
+`;
 
     modal.style.display = 'block';
 
