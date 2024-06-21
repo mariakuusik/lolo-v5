@@ -280,70 +280,79 @@ async function filterAndRenderArticles() {
     const allArticles = JSON.parse(localStorage.getItem('allArticles')) || [];
 
     const selectedCategory = document.getElementById('categorySelect').value;
-    const filteredArticles = selectedCategory === 'all' ? allArticles : allArticles.filter(article => article.categories.includes(selectedCategory));
+    const filteredArticles = filterArticlesByCategory(allArticles, selectedCategory);
 
     content.innerHTML = '';
 
     const sortedAllArticles = sortArticlesByDate(filteredArticles);
 
     for (const item of sortedAllArticles) {
-        const article = document.createElement('div');
-        article.className = 'article';
-        article.dataset.feedUrl = item.feedUrl;
-
-        const imageUrl = handleImage(item);
-
-        const categories = item.categories && item.categories.length > 0 ? item.categories : ['Uncategorized'];
-        const categoriesHtml = categories.map(category => `<span class="category">${category}</span>`).join(', ');
-
-        const articleContent = document.createElement('div');
-        articleContent.className = 'article-content';
-
-        if (imageUrl) {
-            const image = document.createElement('img');
-            image.src = imageUrl;
-            image.alt = item.title;
-            image.className = 'article-image';
-            image.dataset.url = item.link;
-            articleContent.appendChild(image);
-        }
-
-        const textContent = document.createElement('div');
-        textContent.className = 'text-content';
-
-        const title = document.createElement('h2');
-        title.innerHTML = `<a href="#" class="article-title" data-url="${item.link}">${item.title}</a>`;
-
-        const description = document.createElement('p');
-        description.className = 'article-description';
-        description.dataset.url = item.link;
-        description.textContent = item.description;
-
-        const categoryPara = document.createElement('p');
-        categoryPara.innerHTML = `Categories: ${categoriesHtml}`;
-
-        const date = document.createElement('small');
-        date.textContent = new Date(item.pubDate).toLocaleString();
-
-        textContent.appendChild(title);
-        textContent.appendChild(description);
-        textContent.appendChild(categoryPara);
-        textContent.appendChild(date);
-
-        articleContent.appendChild(textContent);
-        article.appendChild(articleContent);
-
-        // event listeners for title, description, and image
-        const clickableElements = article.querySelectorAll('.article-title, .article-description, .article-image');
-        clickableElements.forEach(element => {
-            element.addEventListener('click', async (event) => {
-                event.preventDefault();
-                const articleUrl = event.target.dataset.url;
-                const clutterFreeContent = await fetchClutterFreeContent(articleUrl);
-                openModal(clutterFreeContent);
-            });
-        });
-
+        const article = createArticleElement(item);
         content.appendChild(article);
     }
+}
+
+function filterArticlesByCategory(allArticles, selectedCategory) {
+    return selectedCategory === 'all' ? allArticles : allArticles.filter(article => article.categories.includes(selectedCategory));
+}
+
+function createArticleElement(item) {
+    const article = document.createElement('div');
+    article.className = 'article';
+    article.dataset.feedUrl = item.feedUrl;
+
+    const imageUrl = handleImage(item);
+
+    const categories = item.categories && item.categories.length > 0 ? item.categories : ['Uncategorized'];
+    const categoriesHtml = categories.map(category => `<span class="category">${category}</span>`).join(', ');
+
+    const articleContent = document.createElement('div');
+    articleContent.className = 'article-content';
+
+    if (imageUrl) {
+        const image = document.createElement('img');
+        image.src = imageUrl;
+        image.alt = item.title;
+        image.className = 'article-image';
+        image.dataset.url = item.link;
+        articleContent.appendChild(image);
+    }
+
+    const textContent = document.createElement('div');
+    textContent.className = 'text-content';
+
+    const title = document.createElement('h2');
+    title.innerHTML = `<a href="#" class="article-title" data-url="${item.link}">${item.title}</a>`;
+
+    const description = document.createElement('p');
+    description.className = 'article-description';
+    description.dataset.url = item.link;
+    description.textContent = item.description;
+
+    const categoryPara = document.createElement('p');
+    categoryPara.innerHTML = `Categories: ${categoriesHtml}`;
+
+    const date = document.createElement('small');
+    date.textContent = new Date(item.pubDate).toLocaleString();
+
+    textContent.appendChild(title);
+    textContent.appendChild(description);
+    textContent.appendChild(categoryPara);
+    textContent.appendChild(date);
+
+    articleContent.appendChild(textContent);
+    article.appendChild(articleContent);
+
+    // event listeners for title, description, and image
+    const clickableElements = article.querySelectorAll('.article-title, .article-description, .article-image');
+    clickableElements.forEach(element => {
+        element.addEventListener('click', async (event) => {
+            event.preventDefault();
+            const articleUrl = event.target.dataset.url;
+            const clutterFreeContent = await fetchClutterFreeContent(articleUrl);
+            openModal(clutterFreeContent);
+        });
+    });
+
+    return article;
 }
