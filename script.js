@@ -280,19 +280,21 @@ function updateCategories() {
     const categoryList = document.getElementById('categoryList');
     categoryList.innerHTML = '';
 
-    const sortedCategories = Array.from(categories).sort();
+    const sortedCategories = Array.from(categories).sort((a, b) => a.localeCompare(b));
+
+    const allCategoriesItem = document.createElement('li');
+    allCategoriesItem.textContent = 'All';
+    allCategoriesItem.classList.add('category-item');
+    allCategoriesItem.addEventListener('click', () => filterByCategory('all'));
+    categoryList.appendChild(allCategoriesItem);
 
     sortedCategories.forEach(category => {
         const listItem = document.createElement('li');
         listItem.textContent = category;
+        listItem.classList.add('category-item');
         listItem.addEventListener('click', () => filterByCategory(category));
         categoryList.appendChild(listItem);
     });
-
-    const allCategoriesItem = document.createElement('li');
-    allCategoriesItem.textContent = 'All';
-    allCategoriesItem.addEventListener('click', () => filterByCategory('all'));
-    categoryList.prepend(allCategoriesItem); // Add 'All' to the top of the list
 }
 
 function filterByCategory(category) {

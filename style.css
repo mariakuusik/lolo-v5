@@ -58,9 +58,17 @@ li {
     margin-bottom: 0.5rem;
 }
 
-li:hover {
+.category-item:hover {
     cursor: pointer;
     color: #555;
+}
+
+li {
+    cursor: default;
+}
+
+.feed-item:hover {
+    color: inherit;
 }
 
 main {
