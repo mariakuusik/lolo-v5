@@ -120,12 +120,24 @@ async function addFeed(feedUrl, feedName) {
 function displayFeed(feedUrl, feedName) {
     const feedList = document.getElementById('feeds');
     const feedItem = document.createElement('li');
+    feedItem.className = 'feed-item';
     feedItem.id = `feed-${btoa(feedUrl)}`; // Create a unique ID for the feed list item
-    feedItem.innerHTML = `
-        ${feedName} 
-        <button onclick="editFeed('${feedUrl}', '${feedName}')">Edit</button>
-        <button onclick="removeFeed('${feedUrl}', 'feed-${btoa(feedUrl)}')">Remove</button>
-    `;
+
+    const feedNameSpan = document.createElement('span');
+    feedNameSpan.textContent = feedName;
+
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Edit';
+    editButton.onclick = () => editFeed(feedUrl, feedName);
+
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'Remove';
+    removeButton.onclick = () => removeFeed(feedUrl, `feed-${btoa(feedUrl)}`);
+
+    feedItem.appendChild(feedNameSpan);
+    feedItem.appendChild(editButton);
+    feedItem.appendChild(removeButton);
+
     feedList.appendChild(feedItem);
 }
 

@@ -14,8 +14,8 @@ body {
 
 .sidebar {
     background: #eee;
-    padding: 1rem;
-    width: 250px;
+    padding: 150px 1rem 1rem 1rem;
+    width: 300px;
     min-height: 100vh;
     overflow-y: auto;
 }
@@ -47,6 +47,15 @@ header form input[type="url"] {
 
 header form button {
     padding: 0.5rem 1rem;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+li {
+    margin-bottom: 0.5rem;
 }
 
 main {
@@ -93,6 +102,23 @@ button:hover {
 
 .article p {
     font-size: 1rem;
+}
+
+.feed-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.feed-item button {
+    flex-shrink: 0;
+}
+
+.feed-item span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Modal */
