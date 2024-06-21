@@ -36,8 +36,10 @@ body {
 header {
     background: #ffffff;
     padding: 1rem;
+    padding-bottom: 2rem;
     text-align: center;
     border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
 }
 
 header form {
@@ -55,6 +57,7 @@ header form input[type="url"] {
     font-size: 0.9rem;
     background-color: #f0f0f0;
     box-sizing: border-box;
+    max-width: 1000px;
 }
 
 header form input[type="url"]:hover {
@@ -64,6 +67,16 @@ header form input[type="url"]:hover {
 
 header form button {
     padding: 0.5rem 1rem;
+}
+
+.header-logo {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.header-logo img {
+    width: 40px;
+    height: auto;
 }
 
 ul {
