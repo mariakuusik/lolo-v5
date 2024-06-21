@@ -14,10 +14,17 @@ body {
 
 .sidebar {
     background: #eee;
-    padding: 150px 1rem 1rem 1rem;
+    padding: 1rem;
     width: 300px;
     min-height: 100vh;
     overflow-y: auto;
+}
+
+.sidebar .logo {
+    display: block;
+    width: 200px;
+    height: auto;
+    margin: 0 auto 50px;
 }
 
 .main-content {
