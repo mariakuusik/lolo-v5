@@ -72,6 +72,16 @@ main {
     object-fit: cover;
 }
 
+.article-title:hover,
+.article-description:hover,
+.article-image:hover {
+    cursor: pointer;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
 .text-content {
     flex: 1;
 }
