@@ -346,6 +346,10 @@ function createArticleElement(item) {
     const textContent = document.createElement('div');
     textContent.className = 'text-content';
 
+    const feedBadge = document.createElement('div');
+    feedBadge.className = 'feed-badge';
+    feedBadge.textContent = item.feedName;
+
     const title = document.createElement('h2');
     title.innerHTML = `<a href="#" class="article-title" data-url="${item.link}">${item.title}</a>`;
 
@@ -360,6 +364,7 @@ function createArticleElement(item) {
     const date = document.createElement('small');
     date.textContent = new Date(item.pubDate).toLocaleString();
 
+    textContent.appendChild(feedBadge);
     textContent.appendChild(title);
     textContent.appendChild(description);
     textContent.appendChild(categoryPara);
