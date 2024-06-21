@@ -139,10 +139,11 @@ function displayFeed(feedUrl, feedName) {
 
     const feedNameSpan = document.createElement('span');
     feedNameSpan.textContent = feedName;
+    feedNameSpan.classList.add('feed-name');
 
     const editButton = document.createElement('button');
     editButton.textContent = 'Edit';
-    editButton.onclick = () => editFeed(feedUrl, feedName);
+    editButton.onclick = () => toggleEditForm(feedItem, feedUrl, feedName);
 
     const removeButton = document.createElement('button');
     removeButton.textContent = 'Remove';
@@ -153,6 +154,62 @@ function displayFeed(feedUrl, feedName) {
     feedItem.appendChild(removeButton);
 
     feedList.appendChild(feedItem);
+}
+
+function toggleEditForm(feedItem, feedUrl, feedName) {
+    const existingForm = feedItem.querySelector('.collapsible-menu');
+    if (existingForm) {
+        existingForm.remove();
+        const buttons = feedItem.querySelectorAll('button');
+        buttons.forEach(button => button.style.display = 'inline-block');
+        return;
+    }
+
+    const editForm = document.createElement('div');
+    editForm.className = 'collapsible-menu';
+    editForm.innerHTML = `
+        <label for="editFeedName">Feed Name:</label>
+        <input type="text" id="editFeedName" value="${feedName}" required>
+        <label for="editFeedUrl">Feed URL:</label>
+        <input type="url" id="editFeedUrl" value="${feedUrl}" required>
+        <button type="submit">Save</button>
+        <button type="button" onclick="cancelEdit(this)">Cancel</button>
+    `;
+
+    editForm.querySelector('button[type="submit"]').onclick = () => {
+        const newFeedName = editForm.querySelector('#editFeedName').value;
+        const newFeedUrl = editForm.querySelector('#editFeedUrl').value;
+        updateFeed(feedUrl, newFeedUrl, newFeedName, feedItem);
+    };
+
+    const buttons = feedItem.querySelectorAll('button');
+    buttons.forEach(button => button.style.display = 'none');
+    feedItem.appendChild(editForm);
+    editForm.style.display = 'block';
+}
+
+function cancelEdit(button) {
+    const editForm = button.closest('.collapsible-menu');
+    const feedItem = editForm.closest('.feed-item');
+    editForm.remove();
+    const buttons = feedItem.querySelectorAll('button');
+    buttons.forEach(button => button.style.display = 'inline-block');
+}
+
+function updateFeed(oldUrl, newUrl, newName, feedItem) {
+    let feeds = JSON.parse(localStorage.getItem('feeds')) || [];
+    feeds = feeds.map(feed => {
+        if (feed.url === oldUrl) {
+            return { url: newUrl, name: newName };
+        }
+        return feed;
+    });
+    localStorage.setItem('feeds', JSON.stringify(feeds));
+
+    feedItem.querySelector('.feed-name').textContent = newName;
+    feedItem.querySelector('.collapsible-menu').remove();
+    const buttons = feedItem.querySelectorAll('button');
+    buttons.forEach(button => button.style.display = 'inline-block');
 }
 
 async function getFeedName(feedUrl) {
@@ -181,53 +238,6 @@ function removeFeed(feedUrl, feedItemId) {
     const updatedArticles = allArticles.filter(article => article.feedUrl !== feedUrl);
     localStorage.setItem('allArticles', JSON.stringify(updatedArticles));
     filterAndRenderArticles();
-}
-
-function editFeed(feedUrl, feedName) {
-    console.log('Editing feed:', feedUrl, feedName);
-    const existingForm = document.getElementById('editFeedForm');
-    if (existingForm) {
-        existingForm.remove(); // Remove any existing form before creating a new one
-    }
-
-    const editForm = document.createElement('div');
-    editForm.innerHTML = `
-        <form id="editFeedForm">
-            <label for="editFeedName">Feed Name:</label>
-            <input type="text" id="editFeedName" value="${feedName}" required>
-            <label for="editFeedUrl">Feed URL:</label>
-            <input type="url" id="editFeedUrl" value="${feedUrl}" required>
-            <button type="submit">Save Changes</button>
-            <button type="button" onclick="cancelEdit()">Cancel</button>
-        </form>
-    `;
-    document.body.appendChild(editForm);
-    console.log('Edit form appended to body');
-
-    document.getElementById('editFeedForm').addEventListener('submit', (event) => {
-        event.preventDefault();
-        const newFeedName = document.getElementById('editFeedName').value;
-        const newFeedUrl = document.getElementById('editFeedUrl').value;
-        updateFeed(feedUrl, newFeedUrl, newFeedName);
-        document.body.removeChild(editForm);
-    });
-}
-
-function cancelEdit() {
-    const editForm = document.getElementById('editFeedForm').parentElement;
-    document.body.removeChild(editForm);
-}
-
-function updateFeed(oldUrl, newUrl, newName) {
-    let feeds = JSON.parse(localStorage.getItem('feeds')) || [];
-    feeds = feeds.map(feed => {
-        if (feed.url === oldUrl) {
-            return { url: newUrl, name: newName };
-        }
-        return feed;
-    });
-    localStorage.setItem('feeds', JSON.stringify(feeds));
-    location.reload();
 }
 
 async function fetchFeed(feedUrl, feedName) {

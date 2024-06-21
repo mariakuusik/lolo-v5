@@ -151,6 +151,30 @@ button:hover {
     font-weight: bold;
 }
 
+/* Collapsible Menu */
+.collapsible-menu {
+    display: none;
+    background-color: #838E80;
+    padding: 10px;
+    border: 1px solid #6C7A64;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.collapsible-menu label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.collapsible-menu input {
+    width: calc(100% - 20px);
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
 /* Modal */
 .modal {
     display: none;
