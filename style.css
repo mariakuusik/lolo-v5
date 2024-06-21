@@ -43,7 +43,17 @@ header form input[type="url"] {
     flex: 1;
     padding: 0.5rem;
     margin-right: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #f0f0f0;
+    box-sizing: border-box;
 }
+
+header form input[type="url"]:hover {
+    background-color: #e0e0e0;
+}
+
 
 header form button {
     padding: 0.5rem 1rem;
@@ -56,6 +66,20 @@ ul {
 
 li {
     margin-bottom: 0.5rem;
+}
+
+button {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin: 0 2px;
+}
+
+button:hover {
+    background-color: #e0e0e0;
 }
 
 .category-item:hover {
