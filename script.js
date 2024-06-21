@@ -242,12 +242,17 @@ function sortArticlesByDate(articles) {
 
 function handleImage(item) {
     let imageUrl = '';
-    if (item.enclosure) {
+    if (item.enclosure && item.enclosure.link) {
         imageUrl = item.enclosure.link;
-    } else if (item['media:content'] && item['media:content'].url) {
+    }
+    else if (item['media:content'] && item['media:content'].url) {
         imageUrl = item['media:content'].url;
-    } else if (item['media:thumbnail'] && item['media:thumbnail'].url) {
+    }
+    else if (item['media:thumbnail'] && item['media:thumbnail'].url) {
         imageUrl = item['media:thumbnail'].url;
+    }
+    else if (item.enclosure && item.enclosure.thumbnail) {
+        imageUrl = item.enclosure.thumbnail;
     }
     return imageUrl;
 }
