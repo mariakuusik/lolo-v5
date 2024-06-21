@@ -9,14 +9,14 @@ body {
 
 .container {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .sidebar {
     background: #eee;
     padding: 1rem;
     width: 250px;
-    height: 100vh;
+    min-height: 100vh;
     overflow-y: auto;
 }
 
