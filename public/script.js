@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchClutterFreeContent(articleUrl) {
-    const proxyUrl = 'http://localhost:3000/webparser';
+    const proxyUrl = 'https://lolo-v5-1-fq2x.onrender.com/webparser'; // Updated to Render URL
 
     try {
         const response = await fetch(proxyUrl, {
