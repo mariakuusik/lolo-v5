@@ -104,17 +104,20 @@ function setupAddFeedForm() {
 
 async function addFeed(feedUrl, feedName) {
     const feeds = JSON.parse(localStorage.getItem('feeds')) || [];
-    if (!feeds.some(feed => feed.url === feedUrl)) {
-        try {
-            await fetchFeed(feedUrl, feedName);
-            feeds.push({ url: feedUrl, name: feedName });
-            localStorage.setItem('feeds', JSON.stringify(feeds));
-            displayFeed(feedUrl, feedName);
-            displaySuccessMessage("New feed successfully added!"); // Display success message
-        } catch (error) {
-            console.error('Failed to add feed', error);
-            alert('Failed to add feed. Please check the URL and try again');
-        }
+    if (feeds.some(feed => feed.url === feedUrl)) {
+        displaySuccessMessage("This feed is already in your list.");
+        return;
+    }
+
+    try {
+        await fetchFeed(feedUrl, feedName);
+        feeds.push({ url: feedUrl, name: feedName });
+        localStorage.setItem('feeds', JSON.stringify(feeds));
+        displayFeed(feedUrl, feedName);
+        displaySuccessMessage("New feed successfully added!");
+    } catch (error) {
+        console.error('Failed to add feed', error);
+        alert('Failed to add feed. Please check the URL and try again');
     }
 }
 
