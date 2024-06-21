@@ -138,6 +138,16 @@ main {
     object-fit: cover;
 }
 
+.article-title {
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: #333;
+}
+
+.article-title:hover {
+    color: #555;
+}
+
 .article-title:hover,
 .article-description:hover,
 .article-image:hover {
