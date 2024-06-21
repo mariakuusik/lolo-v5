@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadFeeds();
     }
     setupAddFeedForm();
-    setupCategoryFilter();
+    updateCategories();
 });
 
 async function fetchClutterFreeContent(articleUrl) {
@@ -270,11 +270,6 @@ async function appendArticles(articles, feedName, feedUrl) {
     await filterAndRenderArticles();
 }
 
-function setupCategoryFilter() {
-    const categorySelect = document.getElementById('categorySelect');
-    categorySelect.addEventListener('change', filterAndRenderArticles);
-}
-
 function updateCategories() {
     const allArticles = JSON.parse(localStorage.getItem('allArticles')) || [];
     const categories = new Set();
@@ -282,21 +277,32 @@ function updateCategories() {
         article.categories.forEach(category => categories.add(category));
     });
 
-    const categorySelect = document.getElementById('categorySelect');
-    categorySelect.innerHTML = '<option value="all">All</option>';
-    categories.forEach(category => {
-        const option = document.createElement('option');
-        option.value = category;
-        option.textContent = category;
-        categorySelect.appendChild(option);
+    const categoryList = document.getElementById('categoryList');
+    categoryList.innerHTML = '';
+
+    const sortedCategories = Array.from(categories).sort();
+
+    sortedCategories.forEach(category => {
+        const listItem = document.createElement('li');
+        listItem.textContent = category;
+        listItem.addEventListener('click', () => filterByCategory(category));
+        categoryList.appendChild(listItem);
     });
+
+    const allCategoriesItem = document.createElement('li');
+    allCategoriesItem.textContent = 'All';
+    allCategoriesItem.addEventListener('click', () => filterByCategory('all'));
+    categoryList.prepend(allCategoriesItem); // Add 'All' to the top of the list
 }
 
-async function filterAndRenderArticles() {
+function filterByCategory(category) {
+    filterAndRenderArticles(category);
+}
+
+async function filterAndRenderArticles(selectedCategory = 'all') {
     const content = document.getElementById('content');
     const allArticles = JSON.parse(localStorage.getItem('allArticles')) || [];
 
-    const selectedCategory = document.getElementById('categorySelect').value;
     const filteredArticles = filterArticlesByCategory(allArticles, selectedCategory);
 
     content.innerHTML = '';

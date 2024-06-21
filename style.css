@@ -58,6 +58,11 @@ li {
     margin-bottom: 0.5rem;
 }
 
+li:hover {
+    cursor: pointer;
+    color: #555;
+}
+
 main {
     flex: 1;
     padding: 1rem;
@@ -107,11 +112,10 @@ button:hover {
 .feed-item {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
 }
 
 .feed-item button {
-    flex-shrink: 0;
+    margin-left: 0.5rem;
 }
 
 .feed-item span {
