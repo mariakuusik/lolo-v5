@@ -143,6 +143,14 @@ button:hover {
     border-radius: 0.25rem;
 }
 
+.success-message {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #838E80;
+    display: none;
+    font-weight: bold;
+}
+
 /* Modal */
 .modal {
     display: none;

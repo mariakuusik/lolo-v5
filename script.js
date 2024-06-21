@@ -110,11 +110,22 @@ async function addFeed(feedUrl, feedName) {
             feeds.push({ url: feedUrl, name: feedName });
             localStorage.setItem('feeds', JSON.stringify(feeds));
             displayFeed(feedUrl, feedName);
-        } catch {
+            displaySuccessMessage("New feed successfully added!"); // Display success message
+        } catch (error) {
             console.error('Failed to add feed', error);
-            alert('Failed to add feed. Please check the URL and try again')
+            alert('Failed to add feed. Please check the URL and try again');
         }
     }
+}
+
+function displaySuccessMessage(message) {
+    const successMessage = document.getElementById('successMessage');
+    successMessage.textContent = message;
+    successMessage.style.display = 'block';
+
+    setTimeout(() => {
+        successMessage.style.display = 'none';
+    }, 3000);
 }
 
 function displayFeed(feedUrl, feedName) {
